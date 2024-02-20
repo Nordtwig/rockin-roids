@@ -57,3 +57,7 @@ restart={
 [physics]
 
 2d/default_gravity=0.0
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
