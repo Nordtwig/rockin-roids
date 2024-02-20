@@ -2,17 +2,25 @@ extends RigidBody2D
 
 enum PlayerState {INIT, ALIVE, INVULNERABLE, DEAD}
 
+@export_group("Movement")
 @export var engine_power: float = 500.0
 @export var rotation_power: float = 8000.0
+
+@export_group("Combat")
+@export var bullet_scene: PackedScene
+@export var fire_rate: float = 0.25
 
 var current_state = PlayerState.INIT
 var thrust: Vector2 = Vector2.ZERO
 var rotation_direction: float = 0
 var screen_size: Vector2 = Vector2.ZERO
+var can_shoot: bool = true
 
 
 func _ready() -> void:
     screen_size = get_viewport_rect().size
+    $GunCooldownTimer.timeout.connect(_on_gun_cooldown_timer_timeout)
+    $GunCooldownTimer.wait_time = fire_rate
     _change_state(PlayerState.ALIVE)
 
 
@@ -53,3 +61,19 @@ func _get_input() -> void:
         thrust = transform.x * engine_power
     rotation_direction = Input.get_axis("rotate_left", "rotate_right")
 
+    if Input.is_action_pressed("shoot") && can_shoot:
+        _shoot()
+
+
+func _shoot() -> void:
+    if current_state == PlayerState.INVULNERABLE:
+        return
+    can_shoot = false
+    $GunCooldownTimer.start()
+    var bullet_instance = bullet_scene.instantiate()
+    get_tree().root.add_child(bullet_instance)
+    bullet_instance.start($MuzzleMarker.global_transform)
+
+
+func _on_gun_cooldown_timer_timeout() -> void:
+    can_shoot = true
