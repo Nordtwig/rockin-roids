@@ -1,0 +1,84 @@
+[gd_scene load_steps=7 format=3 uid="uid://bkitkimoesb6a"]
+
+[ext_resource type="FontFile" uid="uid://bgtbb5crxh7k" path="res://assets/kenvector_future_thin.ttf" id="1_24gkn"]
+[ext_resource type="Texture2D" uid="uid://d0d4x255qkskg" path="res://assets/player_small.png" id="2_wifbb"]
+[ext_resource type="Texture2D" uid="uid://byv1g1eilc6h8" path="res://assets/play_button.png" id="3_d72j1"]
+[ext_resource type="Texture2D" uid="uid://b7pquxkba8ofm" path="res://assets/play_button_h.png" id="4_n5edm"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_0lnwb"]
+font = ExtResource("1_24gkn")
+font_size = 64
+outline_size = 12
+outline_color = Color(0.160784, 0.160784, 0.160784, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_fl0fu"]
+font = ExtResource("1_24gkn")
+font_size = 64
+outline_size = 12
+outline_color = Color(0.105882, 0.105882, 0.105882, 1)
+
+[node name="HUD" type="CanvasLayer"]
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="ScoreLabel" type="Label" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+label_settings = SubResource("LabelSettings_0lnwb")
+
+[node name="LivesCounter" type="HBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="L1" type="TextureRect" parent="MarginContainer/HBoxContainer/LivesCounter"]
+layout_mode = 2
+texture = ExtResource("2_wifbb")
+stretch_mode = 5
+
+[node name="L2" type="TextureRect" parent="MarginContainer/HBoxContainer/LivesCounter"]
+layout_mode = 2
+texture = ExtResource("2_wifbb")
+stretch_mode = 5
+
+[node name="L3" type="TextureRect" parent="MarginContainer/HBoxContainer/LivesCounter"]
+layout_mode = 2
+texture = ExtResource("2_wifbb")
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -13.5
+offset_bottom = 13.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 100
+
+[node name="MessageLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Rockin' Roids!"
+label_settings = SubResource("LabelSettings_fl0fu")
+horizontal_alignment = 1
+
+[node name="StartButton" type="TextureButton" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+texture_normal = ExtResource("3_d72j1")
+texture_hover = ExtResource("4_n5edm")
