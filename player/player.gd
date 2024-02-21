@@ -24,8 +24,10 @@ var lives = 0: set = set_lives
 
 func _ready() -> void:
     screen_size = get_viewport_rect().size
+    body_entered.connect(on_body_entered)
     $GunCooldownTimer.timeout.connect(_on_gun_cooldown_timer_timeout)
     $GunCooldownTimer.wait_time = fire_rate
+    $InvulnerabilityTimer.timeout.connect(on_invul_timer_timeout)
     _change_state(PlayerState.ALIVE)
 
 
@@ -52,12 +54,19 @@ func _change_state(new_state) -> void:
     match new_state:
         PlayerState.INIT:
             $CollisionShape2D.set_deferred("disabled", true)
+            $Sprite2D.modulate.a = 0.5
         PlayerState.ALIVE:
             $CollisionShape2D.set_deferred("disabled", false)
+            $Sprite2D.modulate.a = 1.0
         PlayerState.INVULNERABLE:
             $CollisionShape2D.set_deferred("disabled", true)
+            $Sprite2D.modulate.a = 0.5
+            $InvulnerabilityTimer.start()
         PlayerState.DEAD:
             $CollisionShape2D.set_deferred("disabled", true)
+            $Sprite2D.hide()
+            linear_velocity = Vector2.ZERO
+            dead.emit()
     current_state = new_state
 
 
@@ -83,6 +92,13 @@ func _shoot() -> void:
     bullet_instance.start($MuzzleMarker.global_transform)
 
 
+func explode() -> void:
+    $Explosion.show()
+    $Explosion/AnimationPlayer.play("explosion")
+    await $Explosion/AnimationPlayer.animation_finished
+    $Explosion.hide()
+
+
 func set_lives(value) -> void:
     lives = value
     lives_changed.emit(lives)
@@ -99,5 +115,16 @@ func reset() -> void:
     _change_state(PlayerState.ALIVE)
 
 
+func on_body_entered(body) -> void:
+    if body.is_in_group("rocks"):
+        body.explode()
+        lives -= 1
+        explode()
+
+
 func _on_gun_cooldown_timer_timeout() -> void:
     can_shoot = true
+
+
+func on_invul_timer_timeout() -> void:
+    _change_state(PlayerState.ALIVE)

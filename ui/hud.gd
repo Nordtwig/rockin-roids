@@ -12,6 +12,7 @@ func _ready() -> void:
     $Timer.timeout.connect(on_timer_timeout)
     start_button.pressed.connect(on_start_button_pressed)
     get_parent().player_lives_changed.connect(on_main_player_lives_changed)
+    get_parent().player_dead.connect(on_main_player_dead)
 
 
 func show_message(text: String) -> void:
@@ -47,3 +48,7 @@ func on_start_button_pressed() -> void:
 
 func on_main_player_lives_changed(value) -> void:
     update_lives_counter(value)
+
+
+func on_main_player_dead() -> void:
+    game_over()

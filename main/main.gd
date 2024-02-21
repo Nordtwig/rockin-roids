@@ -1,6 +1,7 @@
 extends Node
 
 signal player_lives_changed(value)
+signal player_dead()
 
 @export var rock_scene: PackedScene
 
@@ -14,6 +15,7 @@ func _ready() -> void:
     screen_size = get_viewport().get_visible_rect().size
     $HUD.start_game.connect(on_hud_start_game)
     $Player.lives_changed.connect(on_player_lives_changed)
+    $Player.dead.connect(on_player_dead)
     
 
 func _process(_delta) -> void:
@@ -71,3 +73,7 @@ func on_hud_start_game() -> void:
 
 func on_player_lives_changed(value) -> void:
     player_lives_changed.emit(value)
+
+
+func on_player_dead() -> void:
+    player_dead.emit()
