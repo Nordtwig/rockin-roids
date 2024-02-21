@@ -1,5 +1,8 @@
 extends RigidBody2D
 
+signal lives_changed
+signal dead
+
 enum PlayerState {INIT, ALIVE, INVULNERABLE, DEAD}
 
 @export_group("Movement")
@@ -15,6 +18,8 @@ var thrust: Vector2 = Vector2.ZERO
 var rotation_direction: float = 0
 var screen_size: Vector2 = Vector2.ZERO
 var can_shoot: bool = true
+var reset_position = false
+var lives = 0: set = set_lives
 
 
 func _ready() -> void:
@@ -38,6 +43,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
     x_form.origin.x = wrapf(x_form.origin.x, 0, screen_size.x)
     x_form.origin.y = wrapf(x_form.origin.y, 0, screen_size.y)
     physics_state.transform = x_form
+    if reset_position:
+        physics_state.transform.origin = screen_size / 2
+        reset_position = false
 
 
 func _change_state(new_state) -> void:
@@ -73,6 +81,22 @@ func _shoot() -> void:
     var bullet_instance = bullet_scene.instantiate()
     get_tree().root.add_child(bullet_instance)
     bullet_instance.start($MuzzleMarker.global_transform)
+
+
+func set_lives(value) -> void:
+    lives = value
+    lives_changed.emit(lives)
+    if lives <= 0:
+        _change_state(PlayerState.DEAD)
+    else:
+        _change_state(PlayerState.INVULNERABLE)
+
+
+func reset() -> void:
+    reset_position = true
+    $Sprite2D.show()
+    lives = 3
+    _change_state(PlayerState.ALIVE)
 
 
 func _on_gun_cooldown_timer_timeout() -> void:

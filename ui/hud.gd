@@ -11,6 +11,7 @@ signal start_game
 func _ready() -> void:
     $Timer.timeout.connect(on_timer_timeout)
     start_button.pressed.connect(on_start_button_pressed)
+    get_parent().player_lives_changed.connect(on_main_player_lives_changed)
 
 
 func show_message(text: String) -> void:
@@ -42,3 +43,7 @@ func on_timer_timeout() -> void:
 func on_start_button_pressed() -> void:
     start_button.hide()
     start_game.emit()
+
+
+func on_main_player_lives_changed(value) -> void:
+    update_lives_counter(value)
