@@ -4,6 +4,7 @@ signal player_lives_changed(value)
 signal player_dead()
 
 @export var rock_scene: PackedScene
+@export var enemy_scene: PackedScene
 
 var screen_size: Vector2 = Vector2.ZERO
 var level: int = 0
@@ -16,6 +17,7 @@ func _ready() -> void:
     $HUD.start_game.connect(on_hud_start_game)
     $Player.lives_changed.connect(on_player_lives_changed)
     $Player.dead.connect(on_player_dead)
+    $EnemyTimer.timeout.connect(on_enemy_timer_timeout)
     
 
 func _process(_delta) -> void:
@@ -79,6 +81,7 @@ func new_level() -> void:
     $HUD.show_message("Wave %s" % level)
     for i in level:
         spawn_rock(3)
+    $EnemyTimer.start(randf_range(5, 10))
     
 
 func on_hud_start_game() -> void:
@@ -91,3 +94,11 @@ func on_player_lives_changed(value) -> void:
 
 func on_player_dead() -> void:
     player_dead.emit()
+
+
+func on_enemy_timer_timeout() -> void:
+    var enemy_instance = enemy_scene.instantiate()
+    add_child(enemy_instance)
+    enemy_instance.target = $Player
+    $EnemyTimer.start(randf_range(20, 40))
+
