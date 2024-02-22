@@ -56,17 +56,8 @@ func spawn_rock(size: float, position = null, velocity = null) -> void:
     rock_instance.exploded.connect(self._on_rock_exploded)
 
 
-func _on_rock_exploded(size, radius, pos, vel) -> void:
-    if size <= 1:
-        return
-    for offset in [-1, 1]:
-        var dir =  $Player.position.direction_to(pos).orthogonal() * offset
-        var new_pos = pos + dir * radius
-        var new_vel = dir * vel.length() * 1.1
-        spawn_rock(size - 1, new_pos, new_vel)
-
-
 func new_game() -> void:
+    $Music.play()
     # remove any rocks from previous game
     get_tree().call_group("rocks", "queue_free")
     level = 0
@@ -79,6 +70,7 @@ func new_game() -> void:
 
 
 func new_level() -> void:
+    $LevelupSound.play()
     level += 1
     $HUD.show_message("Wave %s" % level)
     for i in level:
@@ -95,12 +87,24 @@ func on_player_lives_changed(value) -> void:
 
 
 func on_player_dead() -> void:
+    $Music.stop()
     player_dead.emit()
 
 
 func on_player_shield_changed(value: float) -> void:
     player_shield_changed.emit(value)
 
+
+func _on_rock_exploded(size, radius, pos, vel) -> void:
+    $ExplosionSound.play()
+    if size <= 1:
+        return
+    for offset in [-1, 1]:
+        var dir =  $Player.position.direction_to(pos).orthogonal() * offset
+        var new_pos = pos + dir * radius
+        var new_vel = dir * vel.length() * 1.1
+        spawn_rock(size - 1, new_pos, new_vel)
+    
 
 func on_enemy_timer_timeout() -> void:
     var enemy_instance = enemy_scene.instantiate()

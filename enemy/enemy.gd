@@ -38,6 +38,7 @@ func shoot() -> void:
 func shoot_pulse(n, delay) -> void:
     for i in n:
         shoot()
+        $LaserAudioStreamPlayer.play()
         await get_tree().create_timer(delay).timeout
 
 
@@ -49,6 +50,7 @@ func take_damage(amount) -> void:
 
 
 func explode() -> void:
+    $ExplosionSound.play()
     speed = 0
     $GunCooldownTimer.stop()
     $CollisionShape2D.set_deferred("disabled", true)

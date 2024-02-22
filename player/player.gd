@@ -73,6 +73,7 @@ func _change_state(new_state) -> void:
             $CollisionShape2D.set_deferred("disabled", true)
             $Sprite2D.hide()
             linear_velocity = Vector2.ZERO
+            $EngineAudioStreamPlayer.stop()
             dead.emit()
     current_state = new_state
 
@@ -83,6 +84,10 @@ func _get_input() -> void:
         return
     if Input.is_action_pressed("thrust"):
         thrust = transform.x * engine_power
+        if not $EngineAudioStreamPlayer.playing:
+            $EngineAudioStreamPlayer.play()
+    else:
+        $EngineAudioStreamPlayer.stop()
     rotation_direction = Input.get_axis("rotate_left", "rotate_right")
 
     if Input.is_action_pressed("shoot") && can_shoot:
@@ -97,6 +102,7 @@ func _shoot() -> void:
     var bullet_instance = bullet_scene.instantiate()
     get_tree().root.add_child(bullet_instance)
     bullet_instance.start($MuzzleMarker.global_transform)
+    $LaserAudioStreamPlayer.play()
 
 
 func explode() -> void:
