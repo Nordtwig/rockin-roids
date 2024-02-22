@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://c7fifqy6dnshj"]
+[gd_scene load_steps=10 format=3 uid="uid://c7fifqy6dnshj"]
 
 [ext_resource type="Texture2D" uid="uid://c0bxb43303qqt" path="res://assets/player_ship.png" id="1_2t86w"]
 [ext_resource type="Script" path="res://player/player.gd" id="1_xlh2l"]
@@ -9,6 +9,14 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_uxtym"]
 radius = 26.0768
+
+[sub_resource type="Curve" id="Curve_wf23i"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_n0ene"]
+offsets = PackedFloat32Array(0, 0.613333)
+colors = PackedColorArray(1, 0.458824, 0.156863, 1, 0.466667, 0, 0.0509804, 1)
 
 [node name="Player" type="RigidBody2D"]
 max_contacts_reported = 1
@@ -47,3 +55,21 @@ volume_db = -10.0
 [node name="EngineAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_hf16m")
 volume_db = -12.0
+
+[node name="Exhaust" type="CPUParticles2D" parent="."]
+show_behind_parent = true
+position = Vector2(-28, 0)
+rotation = 3.14159
+emitting = false
+amount = 25
+lifetime = 0.1
+emission_shape = 3
+emission_rect_extents = Vector2(5, 1)
+spread = 0.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 400.0
+initial_velocity_max = 400.0
+scale_amount_min = 2.0
+scale_amount_max = 7.0
+scale_amount_curve = SubResource("Curve_wf23i")
+color_ramp = SubResource("Gradient_n0ene")

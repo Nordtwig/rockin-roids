@@ -86,8 +86,10 @@ func _get_input() -> void:
         thrust = transform.x * engine_power
         if not $EngineAudioStreamPlayer.playing:
             $EngineAudioStreamPlayer.play()
+            $Exhaust.emitting = true
     else:
         $EngineAudioStreamPlayer.stop()
+        $Exhaust.emitting = false
     rotation_direction = Input.get_axis("rotate_left", "rotate_right")
 
     if Input.is_action_pressed("shoot") && can_shoot:
