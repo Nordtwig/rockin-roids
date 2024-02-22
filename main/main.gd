@@ -2,6 +2,7 @@ extends Node
 
 signal player_lives_changed(value)
 signal player_dead()
+signal player_shield_changed
 
 @export var rock_scene: PackedScene
 @export var enemy_scene: PackedScene
@@ -17,6 +18,7 @@ func _ready() -> void:
     $HUD.start_game.connect(on_hud_start_game)
     $Player.lives_changed.connect(on_player_lives_changed)
     $Player.dead.connect(on_player_dead)
+    $Player.shield_changed.connect(on_player_shield_changed)
     $EnemyTimer.timeout.connect(on_enemy_timer_timeout)
     
 
@@ -94,6 +96,10 @@ func on_player_lives_changed(value) -> void:
 
 func on_player_dead() -> void:
     player_dead.emit()
+
+
+func on_player_shield_changed(value: float) -> void:
+    player_shield_changed.emit(value)
 
 
 func on_enemy_timer_timeout() -> void:
