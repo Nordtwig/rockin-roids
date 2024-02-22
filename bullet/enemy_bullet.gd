@@ -1,6 +1,7 @@
 extends Area2D
 
 @export var speed: float = 1000
+@export var damage: float = 15.0
 
 
 func _ready() -> void:
@@ -18,6 +19,8 @@ func start(_position, _direction) -> void:
 
 
 func on_body_entered(body) -> void:
+    if body.name == "Player":
+        body.shield -= damage
     queue_free()
 
 

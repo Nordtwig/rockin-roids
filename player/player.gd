@@ -2,6 +2,7 @@ extends RigidBody2D
 
 signal lives_changed
 signal dead
+signal shield_changed
 
 enum PlayerState {INIT, ALIVE, INVULNERABLE, DEAD}
 
@@ -13,6 +14,10 @@ enum PlayerState {INIT, ALIVE, INVULNERABLE, DEAD}
 @export var bullet_scene: PackedScene
 @export var fire_rate: float = 0.25
 
+@export_group("Defence")
+@export var max_shield: float = 100.0
+@export var shield_regen: float = 5.0
+
 var current_state = PlayerState.INIT
 var thrust: Vector2 = Vector2.ZERO
 var rotation_direction: float = 0
@@ -20,6 +25,7 @@ var screen_size: Vector2 = Vector2.ZERO
 var can_shoot: bool = true
 var reset_position = false
 var lives = 0: set = set_lives
+var shield = 0: set = set_shield
 
 
 func _ready() -> void:
@@ -31,8 +37,9 @@ func _ready() -> void:
     _change_state(PlayerState.ALIVE)
 
 
-func _process(_delta) -> void:
+func _process(delta) -> void:
     _get_input()
+    shield += shield_regen * delta
 
 
 func _physics_process(_delta) -> void:
@@ -106,7 +113,17 @@ func set_lives(value) -> void:
         _change_state(PlayerState.DEAD)
     else:
         _change_state(PlayerState.INVULNERABLE)
+        shield = max_shield
 
+
+func set_shield(value) -> void:
+    value = min(value, max_shield)
+    shield = value
+    shield_changed.emit(shield / max_shield)
+    if shield <= 0:
+        lives -= 1
+        explode()
+        
 
 func reset() -> void:
     reset_position = true
@@ -117,9 +134,8 @@ func reset() -> void:
 
 func on_body_entered(body) -> void:
     if body.is_in_group("rocks"):
+        shield -= body.size * 25
         body.explode()
-        lives -= 1
-        explode()
 
 
 func _on_gun_cooldown_timer_timeout() -> void:
